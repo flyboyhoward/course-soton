@@ -6,28 +6,6 @@ function [cs,index] = sort_nat(c,mode)
 %    C is a cell array (vector) of strings to be sorted.
 %    S is C, sorted in natural order.
 %    INDEX is the sort order such that S = C(INDEX);
-%
-% Natural order sorting sorts strings containing digits in a way such that
-% the numerical value of the digits is taken into account.  It is
-% especially useful for sorting file names containing index numbers with
-% different numbers of digits.  Often, people will use leading zeros to get
-% the right sort order, but with this function you don't have to do that.
-% For example, if C = {'file1.txt','file2.txt','file10.txt'}, a normal sort
-% will give you
-%
-%       {'file1.txt'  'file10.txt'  'file2.txt'}
-%
-% whereas, sort_nat will give you
-%
-%       {'file1.txt'  'file2.txt'  'file10.txt'}
-%
-% See also: sort
-
-% Version: 1.4, 22 January 2011
-% Author:  Douglas M. Schwarz
-% Email:   dmschwarz=ieee*org, dmschwarz=urgrad*rochester*edu
-% Real_email = regexprep(Email,{'=','*'},{'@','.'})
-
 
 % Set default value for mode if necessary.
 if nargin < 2

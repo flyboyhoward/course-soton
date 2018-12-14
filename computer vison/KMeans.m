@@ -1,10 +1,10 @@
 
 loadimagesets %load both training and testing image sets
 run('vlfeat-0.9.21\toolbox\vl_setup')
-train_number = 90;  %set number of training images in each category
+train_number = 100;  %set number of training images in each category
 
 % create bag of visual words
-numClusters = 800;  %number of clusters
+numClusters = 1000;  %number of clusters
 gridStep = 4;
 patchsize = 8;
 imgBow =[];
@@ -43,18 +43,12 @@ for i = 1:15
     end
 end
 disp(' map taining data complete');
-%{
+
 %{ train set of SVM
-SVMModels = cell(15,1);
-classes = unique(Y_train);
+SVMModel = fitcecoc(X_train, Y_train,'Learners', 'Linear', 'Coding', 'onevsall','ClassNames',classname);%,'Learners',t,'ClassNames',classname
 
-for j = 1:numel(classes)
-    indx = strcmp(Y_train,classes(j)); % Create binary classes for each classifier
-    SVMModels{j} = fitcsvm(X_train, indx, 'ClassNames',[false true],'Standardize',true,...
-        'KernelFunction','rbf','BoxConstraint',1);
-end
-disp(' taining set of linear classifier complete');
-
+test
+%{
 % test correction rate on the rest of training set
 disp('testing...');
 correct = 0;
@@ -86,7 +80,7 @@ end
 rate = correct/(15*(100-train_number))
 %}
 % test on testing set & write classification result into run2.txt file
-%{
+
 fileID = fopen('run2.txt', 'w');
 len = length(imgTest_name);
 for testi = 1:len
@@ -99,14 +93,7 @@ for testi = 1:len
         [~, k] = min(vl_alldist(imgBowi(:,col), centers));
         X_test(1, k) = X_test(1, k) + 1;
     end
-    for svmi = 1:numel(classes)
-        label = predict(SVMModels{svmi},X_test) %test predict
-        if lable == 1
-            imgTest_class = classname{svmi}
-        end
-    end
-
+    imgTest_class = predict(SVMModel,X_test);
     fprintf(fileID,'%s %s\n',char(imgTest_name{testi}),char(imgTest_class));
 end
 fclose(fileID);
-%}

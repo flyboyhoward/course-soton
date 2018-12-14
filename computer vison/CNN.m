@@ -2,7 +2,9 @@ imds = imageDatastore('training/training/', 'IncludeSubfolders', true, 'LabelSou
 [trainingImages, testImages] = splitEachLabel(imds, 0.8, 'randomize');
 
 % Set the ImageDatastore ReadFcn
-imds.ReadFcn = @(filename)readAndPreprocessImage(filename);
+imds.ReadFcn = @(filename)readAndPreprocessImage2(filename);
+trainingImages.ReadFcn = @readAndPreprocessImage2;
+testImages.ReadFcn = @readAndPreprocessImage2;
 
 net = alexnet;
 layers = net.Layers
@@ -13,9 +15,7 @@ layers(25) = classificationLayer
 opts = trainingOptions('sgdm', 'InitialLearnRate', 0.001, 'MaxEpochs', 20, 'MiniBatchSize', 32,...
                 'ExecutionEnvironment', 'cpu', 'Plots','training-progress');
 
-trainingImages.ReadFcn = @readAndPreprocessImage;
-myNet = trainNetwork(trainingImages, layers, opts);
-%testImages.ReadFcn = @readAndPreprocessImage;
+myNet = trainNetwork(imds, layers, opts);
 %predictedLabels = classify(myNet, testImages);
 %accuracy = mean(predictedLabels == testImages.Labels)
 
@@ -31,7 +31,7 @@ imgTest_name = sort_nat(newCa);
 len = length(imgTest_name);
 correct = 0;
 for testi = 1:len
-    imgTest = readAndPreprocessImage(fullfile(imgPath_test, imgTest_name{testi}));
+    imgTest = readAndPreprocessImage2(fullfile(imgPath_test, imgTest_name{testi}));
     tline = fgetl(file_eval);
     linei = strsplit(tline);
     classi = linei{2};
@@ -42,3 +42,18 @@ for testi = 1:len
 end
 fclose(file_eval);
 rate = correct/len
+% test on testing set & write classification result into run2.txt file
+%{
+fileID = fopen('run3.txt', 'w');
+len = length(imgTest_name);
+for testi = 1:len
+    imgTest = readAndPreprocessImage(fullfile(imgPath_test, imgTest_name{testi}));
+    tline = fgetl(file_eval);
+    linei = strsplit(tline);
+    classi = linei{2};
+    predictedLabels = classify(myNet, imgTest);
+
+    fprintf(fileID,'%s %s\n',char(imgTest_name{testi}),char(imgTest_class));
+end
+fclose(fileID);
+%}
