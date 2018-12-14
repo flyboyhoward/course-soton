@@ -1,5 +1,13 @@
 function imgVector = tinyimage(img)
-    %crop image into square 
+%tinyimage: concatenating each of image, we use recommanded 16*16 tiny image
+%
+% usage:  imgVector = tinyimage(img)
+%
+% where,
+%    img is input image 
+
+    
+%crop image into square 
     [height, width, dim] = size(img);
     if height == width
         tinyimg = img;
@@ -18,7 +26,7 @@ function imgVector = tinyimage(img)
     %disp(Sum);
     K = K - Sum/256; % zero means
     % packed into a vector by concatenating each image row
-    imgVector = cat(2,K(1,:),K(2,:));
+    imgVector = cat(2,K(1,:),K(2,:)); %pack image into vector
     for k = 3:16
         imgVector = cat(2, imgVector, K(k,:));
     end

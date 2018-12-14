@@ -7,7 +7,7 @@ function bowimage = bow(img, gridStep, patchsize)
         img = img;
     end
     imgVector = [];
-    iter = 256/gridStep - 1;
+    iter = 63; %256/gridStep - 1;
     for x = 1:iter
         for y = 1:iter
             patch = imcrop(img,[(x-1)*gridStep+1 (y-1)*gridStep+1 patchsize-1 patchsize-1]);
@@ -16,7 +16,7 @@ function bowimage = bow(img, gridStep, patchsize)
             for k = 1:patchsize
                patchVector = cat(2, patchVector, patch(k,:));
             end
-            patchVector = quantify(patchVector,16);
+            patchVector = quantify(patchVector,64);
             %patchVector = normalize(patchVector,'center','mean');
             imgVector = cat(1,imgVector ,patchVector);
             %patchVector = sum(patch,2); % or flatten like this?

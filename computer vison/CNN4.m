@@ -36,5 +36,4 @@ for testi = 1:len
     fprintf(fileID,'%s %s\n',char(imgTest_name{testi}),char(predictedLabels));
 end
 fclose(fileID);
-
 %}
